@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+  cache:
+    image: redis:latest
+  database:
+    image: postgres:latest
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    ports:
+      - "5432:5432"
+    restart: always
+
+  backend:
+    build: .
+    ports:
+      - "3000:3000"
+    depends_on:
+      - database
+    volumes:
+      - .:/usr/app/api
